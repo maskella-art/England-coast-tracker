@@ -1,1 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>England Coast Path Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        #map { width: 100%; height: 100vh; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 flex flex-col md:flex-row h-screen overflow-hidden">
+    <div class="flex-1 relative">
+        <div id="map"></div>
+        <div class="absolute top-4 left-4 z-10 bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-xl max-w-xs">
+            <h1 class="font-bold text-base text-white">England Coast Tracker</h1>
+            <p class="text-xs text-slate-400 mb-3">King Charles III England Coast Path</p>
+            <button id="btn-start" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg text-sm">Start Walking</button>
+        </div>
+    </div>
+    <script>
+        const map = L.map('map').setView([50.6191, -2.2471], 11);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
 
+        let tracking = false;
+        let polyline = L.polyline([], {color: '#10b981', weight: 5}).addTo(map);
+
+        document.getElementById('btn-start').onclick = function() {
+            tracking = !tracking;
+            this.textContent = tracking ? 'Stop & Save Walk' : 'Start Walking';
+            this.className = tracking ? 'w-full bg-rose-600 text-white font-bold py-2 px-4 rounded-lg text-sm' : 'w-full bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg text-sm';
+            
+            if (tracking && navigator.geolocation) {
+                navigator.geolocation.watchPosition(pos => {
+                    const coords = [pos.coords.latitude, pos.coords.longitude];
+                    polyline.addLatLng(coords);
+                    map.panTo(coords);
+                }, err => alert('GPS Error: ' + err.message), { enableHighAccuracy: true });
+            }
+        };
+    </script>
+</body>
+</html>
+How to get this onto your computer now:
+Copy the code: Move your mouse over the black code box above and click "Copy code" in the top right corner of the box (or highlight the code and press Ctrl+C / Cmd+C).
+
+Open Notepad (Windows) or TextEdit (Mac).
+
+Paste the code (Ctrl+V / Cmd+V).
+
+Save the file to your Desktop as index.html
